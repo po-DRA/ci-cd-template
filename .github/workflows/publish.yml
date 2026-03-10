@@ -1,4 +1,4 @@
-name: Publish package
+name: Publish package to TestPyPI
 
 on:
   release:
@@ -11,12 +11,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: build package
+      - name: Install pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
+
+      - name: Install dependencies
+        run: pixi install
+
+      - name: Build package
         run: |
           pip install build
           python -m build
 
-      - name: publish to TestPyPI
+      - name: Publish to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-         password: ${{ secrets.PYPI_API_TOKEN }}
+          repository-url: https://test.pypi.org/legacy/
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}

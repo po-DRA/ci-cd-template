@@ -1,0 +1,24 @@
+version: 2
+updates:
+  # Maintain dependencies for GitHub Actions in workflow files
+  # By default, the directory to be checked is .github/workflows for the github-actions
+  # package ecosystem
+  # ref: https://docs.github.com/en/code-security/dependabot/working-with-dependabot/keeping-your-actions-up-to-date-with-dependabot
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      # Group all GHA updates together into a single PR to avoid version desync
+      # between related actions (e.g. upload-artifact and download-artifact must
+      # stay on the same major version or workflows break)
+      # ref: https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file#groups
+      actions:
+        patterns:
+          - "*"
+
+# NOTE: The pip ecosystem is intentionally not included here.
+# Python dependencies are managed by Pixi (pixi.toml + pixi.lock), not pip.
+# Dependabot's pip scanner only reads pyproject.toml and would miss everything
+# in pixi.toml, giving an incomplete and misleading picture.
+# Update Python dependencies manually via: pixi update

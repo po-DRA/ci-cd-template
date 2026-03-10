@@ -7,30 +7,47 @@ name = "ci_cd_template"
 version = "0.1.0"
 description = "A minimal ML project template with automated testing, training, and publishing."
 authors = [{name="Your Name", email="you@example.com"}]
-license = {text="MIT"}
+license = "MIT"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "numpy",
     "pandas",
-    "marimo",
     "scikit-learn",
-    "joblib"  # optional, for saving/loading models
+    "joblib",
+    "marimo",
 ]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-dir]
+"" = "src"
 
 [tool.ruff]
 line-length = 88
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I"]
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-addopts = "--maxfail=1 --disable-warnings -q"
+# --maxfail=1 is removed so all test failures are visible at once (useful with coverage/hypothesis)
+addopts = "--disable-warnings -q"
 testpaths = ["tests"]
 
-[tool.uv]
-commands = { 
-    test = "pytest",
-    lint = "ruff src tests scripts notebooks",
-    train = "python scripts/train.py",
-    notebook = "jupyter nbconvert --to notebook --execute notebooks/dashboard.py"
-}
+# ── Flow 4 (advanced): coverage config ────────────────────────────────────────
+[tool.coverage.run]
+source = ["src/ci_cd_template"]
+omit   = ["*/__init__.py"]
+
+[tool.coverage.report]
+fail_under   = 80       # CI fails if coverage drops below 80 %
+show_missing = true     # show which lines are not covered
+
+# ── Flow 5 (advanced): mypy type checking config ──────────────────────────────
+[tool.mypy]
+python_version = "3.11"
+files          = ["src/ci_cd_template"]
+strict         = false          # start lenient; enable strict mode as an exercise
+ignore_missing_imports = true   # suppress errors for libs without stubs

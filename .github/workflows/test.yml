@@ -9,14 +9,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: install pixi
-        uses: prefix-dev/setup-pixi@v0
+      - name: Install pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
 
-      - name: install dependencies
+      - name: Install dependencies
         run: pixi install
 
-      - name: run training
-        run: pixi run python scripts/train.py
+      # ── Flow 1: train the model so file-based tests are not skipped ──────────
+      - name: Train model
+        run: pixi run train
 
-      - name: run tests
-        run: pixi run pytest
+      # ── Flow 2 & 3: example-based + unit + E2E tests ─────────────────────────
+      - name: Run tests
+        run: pixi run test
+
+      # ── Flow 4 (advanced): coverage — CI fails if coverage < 80% ─────────────
+      # Students: comment out this step while learning the basics, then re-enable.
+      - name: Check test coverage
+        run: pixi run coverage

@@ -1,0 +1,47 @@
+name: Validate data
+
+# TEACHING NOTES — read this before editing
+# ═══════════════════════════════════════════════════════════════════════════════
+# This is an example of "policy-as-code":
+#   Instead of writing a rule in README ("please keep data.csv valid"),
+#   we ENFORCE it automatically — the PR cannot be merged if data is invalid.
+#
+# Compare to the accessibility-alt-text-bot workflow pattern from The Turing Way:
+#   https://github.com/the-turing-way/the-turing-way/blob/main/.github/workflows/accessibility-alt-text-bot.yml
+#
+# Both workflows share the same mental model:
+#   1. Identify a policy your team cares about.
+#   2. Find a way to check it automatically (a script, or a community action).
+#   3. Wire it to the right trigger (here: a PR that changes data/).
+#   4. Declare only the permissions the job needs (here: read-only).
+#
+# TRIGGER: Only runs when a PR modifies something inside data/
+# This avoids wasting CI minutes on PRs that only change docs or tests.
+
+on:
+  pull_request:
+    paths:
+      - "data/**"
+
+# Least-privilege permissions: this job only reads code, it writes nothing.
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate data.csv schema and value ranges
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pixi
+        uses: prefix-dev/setup-pixi@v0.8.1
+
+      - name: Install dependencies
+        run: pixi install
+
+      - name: Validate data.csv
+        run: pixi run validate-data
+        # Exit code 0  → all checks passed  → PR can be merged
+        # Exit code 1  → validation failed  → PR is blocked with a clear error

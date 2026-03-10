@@ -1,0 +1,47 @@
+# Pre-commit hook configuration
+# ═══════════════════════════════════════════════════════════════════════════════
+# Pre-commit hooks run automatically before every `git commit`.
+# They catch lint and formatting issues *before* the code reaches CI —
+# this is the professional standard for Python projects.
+#
+# SETUP (one-time, per developer):
+#   pixi run pre-commit-install
+#   # or directly:
+#   pre-commit install
+#
+# USAGE:
+#   git commit -m "my change"   ← hooks run automatically
+#   pixi run pre-commit         ← run manually on all staged files
+#   pre-commit run --all-files  ← run on every file in the repo
+#
+# If a hook fails, the commit is blocked. Fix the issue and `git add` again.
+#
+# ── Flow 5: code quality ──────────────────────────────────────────────────────
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Pin to a specific version for reproducibility — update via Dependabot
+    rev: v0.4.4
+    hooks:
+      # Linting: finds unused imports, undefined names, style violations, etc.
+      - id: ruff
+        args: [--fix]          # auto-fix safe issues; fails on unfixable ones
+
+      # Formatting: enforces consistent code style (replaces Black)
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      # Prevent accidentally committing large binary files
+      - id: check-added-large-files
+        args: [--maxkb=500]
+
+      # Ensure all files end with a newline (common requirement in PRs)
+      - id: end-of-file-fixer
+
+      # Remove trailing whitespace
+      - id: trailing-whitespace
+
+      # Prevent committing directly to .env (secrets)
+      - id: detect-private-key

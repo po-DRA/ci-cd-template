@@ -1,10 +1,78 @@
-[project]
+[workspace]
 name = "ci-cd-course"
+version = "0.1.0"
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-arm64", "osx-64", "win-64"]
 
 [dependencies]
-python = "3.11"
-pandas
-scikit-learn
-pytest
-joblib
-marimo
+python = ">=3.11,<3.13"
+
+# ── Core ML stack ──────────────────────────────────────────────────────────────
+pandas = ">=2.0"
+scikit-learn = ">=1.3"
+joblib = ">=1.3"
+
+# ── Flow 2 & 3: example-based testing ─────────────────────────────────────────
+pytest = ">=7.0"
+
+# ── Flow 4 (advanced): coverage — how much code do tests reach? ───────────────
+pytest-cov = ">=5.0"
+
+# ── Flow 4 (advanced): property-based testing — test with random valid inputs ─
+hypothesis = ">=6.0"
+
+# ── Flow 4 (advanced): snapshot testing — detect unintended output changes ────
+syrupy = ">=4.0"
+
+# ── Flow 5: code quality — linting, formatting, type checking, pre-commit ─────
+ruff = ">=0.4"
+mypy = ">=1.10"
+pre-commit = ">=3.7"
+
+# ── Flow 6: dashboard ─────────────────────────────────────────────────────────
+marimo = ">=0.8"
+
+# ── Flow 7 & 8: packaging and publishing ──────────────────────────────────────
+twine = ">=5.0"
+
+[pypi-dependencies]
+# Installs this repo itself as an editable package so imports work in tests
+ci_cd_template = { path = ".", editable = true }
+
+# ── Flow 4 (advanced): mutation testing — do tests actually catch bugs? ───────
+# mutmut is PyPI-only (not on conda-forge), so it goes here
+mutmut = ">=2.0"
+
+# mypy stubs for pandas and scikit-learn (needed for type checking to work)
+pandas-stubs = ">=2.0"
+
+# ── Flow 7 & 8: build tools ────────────────────────────────────────────────────
+# build is PyPI-only at the versions we need
+build = ">=1.0"
+
+[tasks]
+# ── Flow 1 ─────────────────────────────────────────────────────────────────────
+train              = "python scripts/train.py"           # train model → model/model.joblib
+validate-data      = "python scripts/validate_data.py"  # validate data.csv schema + ranges
+
+# ── Flow 2 & 3 ─────────────────────────────────────────────────────────────────
+test               = "pytest"                            # run all tests
+
+# ── Flow 4 (advanced) ──────────────────────────────────────────────────────────
+coverage           = "pytest --cov=ci_cd_template --cov-report=term-missing --cov-report=html"
+snapshot-update    = "pytest --snapshot-update"                          # refresh snapshot files
+mutate             = "mutmut run --paths-to-mutate src/ci_cd_template"
+
+# ── Flow 5: code quality ───────────────────────────────────────────────────────
+lint               = "ruff check src tests scripts"      # find code issues
+lint-fix           = "ruff check --fix src tests scripts" # auto-fix safe issues
+format             = "ruff format src tests scripts"     # auto-format code
+typecheck          = "mypy src/ci_cd_template"           # static type analysis
+pre-commit-install = "pre-commit install"                # one-time setup per developer
+pre-commit         = "pre-commit run --all-files"        # run all hooks manually
+
+# ── Flow 6 ─────────────────────────────────────────────────────────────────────
+dashboard          = "marimo run notebooks/dashboard.py" # open interactive dashboard
+
+# ── Flow 7 & 8 ─────────────────────────────────────────────────────────────────
+build              = "python -m build"                   # build wheel + sdist → dist/
