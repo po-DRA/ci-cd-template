@@ -1,0 +1,22 @@
+name: Run tests
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install pixi
+        uses: prefix-dev/setup-pixi@v0
+
+      - name: install dependencies
+        run: pixi install
+
+      - name: run training
+        run: pixi run python scripts/train.py
+
+      - name: run tests
+        run: pixi run pytest

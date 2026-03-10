@@ -1,0 +1,22 @@
+name: Publish package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: build package
+        run: |
+          pip install build
+          python -m build
+
+      - name: publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+         password: ${{ secrets.PYPI_API_TOKEN }}

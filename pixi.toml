@@ -1,0 +1,10 @@
+[project]
+name = "ci-cd-course"
+
+[dependencies]
+python = "3.11"
+pandas
+scikit-learn
+pytest
+joblib
+marimo
