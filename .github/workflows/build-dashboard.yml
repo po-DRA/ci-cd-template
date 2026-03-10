@@ -3,7 +3,8 @@ name: Update dashboard
 on:
   push:
     paths:
-      - "model/model.joblib"
+      - "data/**"
+      - "scripts/**"
       - "notebooks/**"
 
 jobs:
@@ -18,6 +19,9 @@ jobs:
 
       - name: Install dependencies
         run: pixi install
+
+      - name: Train model
+        run: pixi run train
 
       - name: Export dashboard to HTML
         run: pixi run marimo export html notebooks/dashboard.py -o dashboard.html

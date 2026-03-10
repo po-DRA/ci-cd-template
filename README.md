@@ -803,6 +803,23 @@ flowchart LR
 | `build-dashboard.yml` | Push changes to `model/` or `notebooks/` | Export Marimo → `dashboard.html` artifact |
 | `publish.yml` | GitHub Release published | Build wheel → publish to TestPyPI |
 
+### Release pipeline
+
+Publishing is triggered by a **GitHub Release**, not a plain `git push`. Here are the steps:
+
+```mermaid
+flowchart LR
+    A["1️⃣ Merge PR<br/>to main"] --> B["2️⃣ GitHub →<br/>Releases → New"]
+    B --> C["3️⃣ Set tag<br/>e.g. v0.1.0"]
+    C --> D["4️⃣ Click<br/>Publish release"]
+    D --> E["🤖 publish.yml<br/>fires automatically"]
+    E --> F["📦 Wheel uploaded<br/>to TestPyPI"]
+```
+
+> **The trigger is the GitHub Release object, not a git tag.**
+> Running `git tag v0.1.0 && git push --tags` alone will **not** trigger publishing —
+> you must create a Release in the GitHub UI (or via `gh release create v0.1.0`).
+
 ### Watch a workflow run
 
 ```bash
