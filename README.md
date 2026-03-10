@@ -1,4 +1,4 @@
-# CI/CD Template — Cardiovascular Risk Prediction
+# CI/CD Template : Cardiovascular Risk Prediction
 
 A hands-on teaching template that walks you through the **full modern Python ML workflow**:
 
