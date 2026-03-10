@@ -1212,3 +1212,14 @@ Both make excellent follow-on exercises.
 - [TestPyPI](https://test.pypi.org/) · [Real PyPI](https://pypi.org/)
 - [Marimo](https://marimo.io/)
 - [Original cardiovascular dataset on Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset)
+
+---
+
+## Acknowledgements
+
+This teaching template was designed and written by a human educator.
+The code, documentation, diagrams, and README were developed with AI assistance
+from **[Claude](https://claude.ai)** (Anthropic) — used as a pair-programming
+partner for debugging, drafting, and refining content throughout the project.
+
+> *A good tool doesn't write the course for you — it helps you write it better.*
