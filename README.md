@@ -1239,15 +1239,31 @@ Both make excellent follow-on exercises.
 
 ## Further reading
 
+**Testing**
+- [CodeRefinery — Software testing](https://coderefinery.github.io/testing/)
+- [CodeRefinery — Testing in reproducible Python ML](https://coderefinery.github.io/reproducible-python-ml/testing/)
+- [pytest documentation](https://docs.pytest.org/)
+- [Hypothesis documentation](https://hypothesis.readthedocs.io/)
+- [Syrupy documentation](https://github.com/syrupy-project/syrupy)
+
+**Packaging**
 - [Python Packaging with Pixi](https://priya-gittest.github.io/Python-Packaging-with-Pixi/) — step-by-step guide this template is based on
+- [CodeRefinery — Packaging in reproducible Python ML](https://coderefinery.github.io/reproducible-python-ml/packaging/)
 - [Pixi documentation](https://pixi.sh/latest/)
+- [TestPyPI](https://test.pypi.org/) · [Real PyPI](https://pypi.org/)
+
+**CI/CD & GitHub Actions**
+- [GitHub Actions documentation](https://docs.github.com/en/actions)
+- [GitHub Actions — Build and test Python](https://docs.github.com/en/actions/tutorials/build-and-test-code/python)
+- [Automating research data workflows with GitHub Actions](https://github.com/cct-datascience/github-actions-for-research)
+- [The Turing Way — Continuous integration options](https://book.the-turing-way.org/reproducible-research/ci/ci-options/)
+
+**Code quality tools**
 - [Ruff documentation](https://docs.astral.sh/ruff/)
 - [mypy documentation](https://mypy.readthedocs.io/)
 - [pre-commit documentation](https://pre-commit.com/)
-- [Hypothesis documentation](https://hypothesis.readthedocs.io/)
-- [Syrupy documentation](https://github.com/syrupy-project/syrupy)
-- [pytest documentation](https://docs.pytest.org/)
-- [TestPyPI](https://test.pypi.org/) · [Real PyPI](https://pypi.org/)
+
+**Other**
 - [Marimo](https://marimo.io/)
 - [Original cardiovascular dataset on Kaggle](https://www.kaggle.com/datasets/sulianova/cardiovascular-disease-dataset)
 
