@@ -761,33 +761,25 @@ GitHub automatically masks the value in all logs — it appears as `***`.
 
 ---
 
-## Flow 8 — Publish to the real PyPI
+## Flow 8 — What comes next: the real PyPI
 
-When your package is ready for the world:
+This course stops at TestPyPI. That is deliberate — TestPyPI is a safe sandbox where
+you can practice the full release workflow without cluttering the real index.
 
-1. **Create a PyPI account** at [https://pypi.org/account/register/](https://pypi.org/account/register/)
-2. **Get a token** — same steps as TestPyPI but at pypi.org
-3. **Add it as a GitHub secret** named `PYPI_API_TOKEN`
-4. **Edit `publish.yml`** — remove the `repository-url` line:
+When you are ready to publish a real package to the world, the process is identical,
+with two small differences:
 
-```yaml
-- name: Publish to PyPI
-  uses: pypa/gh-action-pypi-publish@release/v1
-  with:
-    # No repository-url here = publishes to real PyPI
-    password: ${{ secrets.PYPI_API_TOKEN }}
-```
+| Step | TestPyPI (this course) | Real PyPI |
+|---|---|---|
+| Register | test.pypi.org | pypi.org |
+| Secret name | `TEST_PYPI_API_TOKEN` | `PYPI_API_TOKEN` |
+| `repository-url` in workflow | `https://test.pypi.org/legacy/` | _(remove the line — PyPI is the default)_ |
+| Install URL | `pip install --index-url https://test.pypi.org/simple/ ci_cd_template` | `pip install ci_cd_template` |
 
-5. Push, create a new release — done.
-
-Once published anyone can install your package:
-```bash
-pip install ci_cd_template
-```
-
-> **Important:** PyPI package names are globally unique.
-> Rename `ci_cd_template` in `pyproject.toml` to something unique before your
-> first real publish (e.g. `cardio-risk-yourname`).
+> **Before publishing to real PyPI:**
+> Package names are globally unique. Rename `ci_cd_template` in `pyproject.toml`
+> to something that is yours (e.g. `cardio-risk-yourname`) and check availability
+> at [pypi.org](https://pypi.org/) first.
 
 ---
 
@@ -1125,7 +1117,7 @@ Now the only path to `main` is through a reviewed, green PR.
 | Automated dependency updates | ✅ Dependabot | Weekly PRs |
 | PR review workflow | ✅ PR template + checklist | |
 | Packaging | ✅ pyproject.toml + build | Wheel + sdist |
-| Publishing | ✅ TestPyPI + real PyPI | Automated on release |
+| Publishing | ✅ TestPyPI | Automated on release; real PyPI is same workflow |
 | **Security scanning** | ❌ Not included | Add `pip-audit` as an exercise |
 | **Performance benchmarks** | ❌ Not included | Try `pytest-benchmark` |
 | **Containerisation** | ❌ Not included | Add a `Dockerfile` as a next step |
