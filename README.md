@@ -1,21 +1,38 @@
 # CI/CD Template : Cardiovascular Risk Prediction
 
-A hands-on teaching template that walks you through the **full modern Python ML workflow**:
+A hands-on teaching template that walks you through the **full modern Python ML workflow**.
+
+## Learning journey
+
+```mermaid
+flowchart LR
+    Start([Fork & open\nCodespace]) --> F1[Flow 1\nTrain model]
+    F1 --> F2[Flow 2\nRun tests]
+    F2 --> F4[Flow 4\nCode quality]
+    F4 --> F7[Flow 7\nGitHub Actions]
+    F7 --> F5[Flow 5\nPackage]
+    F5 --> F6[Flow 6\nPublish to\nTestPyPI]
+
+    F2 -.->|go deeper| T[Flows 3 – 3d\nAdvanced testing]
+    F4 -.->|go deeper| Q[Flows 9 – 10\nmypy · pre-commit]
+    F7 -.->|go deeper| O[Flows 11 – 12\nDependabot · PR workflow]
+```
+
+> **New here? Follow the solid arrows.** Each core flow takes 5–15 minutes.
+> Dashed paths are optional — come back to them once the core path works.
+
+### Tools at a glance
 
 | What you will learn | Tool |
 |---|---|
 | Reproducible environments | [Pixi](https://pixi.sh) |
-| Writing and running tests | [pytest](https://pytest.org) |
-| Unit testing a pure function | pytest |
-| Test coverage | [pytest-cov](https://pytest-cov.readthedocs.io/) |
-| Property-based testing | [Hypothesis](https://hypothesis.readthedocs.io/) |
-| Snapshot testing | [Syrupy](https://github.com/syrupy-project/syrupy) |
-| Mutation testing | [mutmut](https://mutmut.readthedocs.io/) |
-| End-to-end testing | pytest |
-| Code quality (lint + format) | [Ruff](https://docs.astral.sh/ruff/) |
 | Training an ML model | [scikit-learn](https://scikit-learn.org) |
+| Writing and running tests | [pytest](https://pytest.org) |
+| Unit / E2E / property-based / snapshot / mutation testing | pytest · [Hypothesis](https://hypothesis.readthedocs.io/) · [Syrupy](https://github.com/syrupy-project/syrupy) · [mutmut](https://mutmut.readthedocs.io/) |
+| Code quality (lint + format) | [Ruff](https://docs.astral.sh/ruff/) |
+| Type checking | [mypy](https://mypy.readthedocs.io/) |
 | Interactive dashboard | [Marimo](https://marimo.io) |
-| Packaging a Python library | `pyproject.toml` + `build` [Packaging Python Projects](https://packaging.python.org/en/latest/tutorials/packaging-projects/) |
+| Packaging a Python library | `pyproject.toml` + `build` |
 | Publishing to TestPyPI | `twine` / GitHub Actions |
 | Automated CI/CD pipelines | [GitHub Actions](https://docs.github.com/en/actions) |
 
@@ -126,7 +143,7 @@ For a deeper walkthrough of Pixi and packaging concepts see:
 
 ---
 
-## Flow 1 — Train the model
+## Flow 1 — Train the model  ·  ⏱ 2 min  ·  required
 
 ```bash
 pixi run train
@@ -145,9 +162,31 @@ Model trained and saved to /workspaces/ci-cd-template/model/model.joblib
 > `model/*.joblib` files are git-ignored (binary artifacts don't belong in version
 > control). GitHub Actions uploads them as **artifacts** instead.
 
+> **What's next →** Flow 2: run the automated tests with `pixi run test`
+
 ---
 
-## Flow 2 — Run automated tests
+## Flow 2 — Run automated tests  ·  ⏱ 5 min  ·  required
+
+This project has six layers of testing, from fast and isolated to slow and integrated:
+
+```mermaid
+flowchart TD
+    U["Unit tests · test_unit.py\nFast · no files · pure functions"]
+    M["Model tests · test_model.py\nPipeline shape + prediction checks"]
+    E["E2E tests · test_e2e.py\nFull data → train → predict"]
+    P["Property-based · test_hypothesis.py\nHundreds of random inputs  "]
+    S["Snapshot tests · test_snapshots.py\nDetect silent output changes"]
+    MU["Mutation testing · mutmut\nDo tests actually catch bugs?"]
+
+    U --> M --> E
+    U -.->|Flow 3d — advanced| P
+    U -.->|Flow 3d — advanced| S
+    U -.->|Flow 3d — advanced| MU
+```
+
+`pixi run test` runs all layers except mutation testing (which is slow and local-only).
+This flow covers the first three; [Flow 3d](#flow-3d----advanced-testing-techniques---30-min--optional) covers the advanced layers.
 
 ```bash
 pixi run test
@@ -183,9 +222,11 @@ pixi run train && pixi run test
 | `test_low_risk_patient_classified_as_no_cardio` | Low-risk profile → `cardio=0` |
 | `test_saved_model_predicts_high_risk` | Persisted model still works *(skipped if no file)* |
 
+> **What's next →** Flow 4: check code quality with `pixi run lint` — or first explore how tests break in Flow 3 (recommended).
+
 ---
 
-## Flow 3 — Make tests fail on purpose
+## Flow 3 — Make tests fail on purpose  ·  ⏱ 10 min  ·  recommended
 
 Learning how tests break is just as important as making them pass.
 Try each experiment, observe the error message, then **revert** before moving on.
@@ -258,9 +299,11 @@ FAILED tests/test_model.py::test_model_predicts_binary_labels
 git checkout -- tests/test_model.py tests/conftest.py scripts/train.py
 ```
 
+> **What's next →** Flow 3b: write a unit test for a pure function — or skip ahead to Flow 4 (code quality).
+
 ---
 
-## Flow 3b — Unit testing a pure function
+## Flow 3b — Unit testing a pure function  ·  ⏱ 10 min  ·  recommended
 
 The tests so far all use the trained model. A *unit test* tests one small piece
 of logic in complete isolation — no files, no model, no ML computation.
@@ -314,9 +357,11 @@ The boundary test catches the bug immediately. Revert:
 git checkout -- src/ci_cd_template/model.py
 ```
 
+> **What's next →** Flow 3c: write an end-to-end test — or skip ahead to Flow 4 (code quality).
+
 ---
 
-## Flow 3c — End-to-end (E2E) testing
+## Flow 3c — End-to-end (E2E) testing  ·  ⏱ 5 min  ·  recommended
 
 An E2E test runs the **entire pipeline** from real data to a final prediction —
 no mocks, no fixtures, no hand-crafted DataFrames.
@@ -349,9 +394,11 @@ tests/test_e2e.py::test_risk_label_pipeline_end_to_end PASSED
 > (Start the server → POST patient data → assert response shape and label.)
 > Read the teaching notes in [tests/test_e2e.py](tests/test_e2e.py) for more.
 
+> **What's next →** Flow 4: check code quality with `pixi run lint` — or go deeper in Flow 3d (advanced testing, optional).
+
 ---
 
-## Flow 3d — Advanced testing techniques
+## Flow 3d — Advanced testing techniques  ·  ⏱ 30 min  ·  optional
 
 ### Coverage — how much code do the tests reach?
 
@@ -513,7 +560,7 @@ a hint to add `test_at_threshold_is_high_risk` to your unit tests.
 
 ---
 
-## Flow 4 — Code quality with Ruff
+## Flow 4 — Code quality with Ruff  ·  ⏱ 10 min  ·  required
 
 Ruff is an extremely fast Python linter and formatter. It replaces Flake8, isort,
 and Black in a single tool — and runs about 100× faster.
@@ -605,9 +652,12 @@ ruff format --check src tests scripts
 Exits with a non-zero code if any file needs reformatting without changing files.
 This is what a CI pipeline runs to block merges on poorly-formatted code.
 
+> **What's next →** Flow 7: set up GitHub Actions so CI runs these checks automatically on every push.
+> Or first: Flow 5 (package your code) → Flow 6 (publish to TestPyPI) → Flow 7.
+
 ---
 
-## Flow 5 — Build a Python package
+## Flow 5 — Build a Python package  ·  ⏱ 5 min  ·  required
 
 Packaging turns your source code into a distributable `.whl` (wheel) and
 `.tar.gz` (source distribution).
@@ -651,9 +701,11 @@ where = ["src"]              # tells setuptools: packages live under src/
 To release a new version: edit `version` in `pyproject.toml`, then run
 `pixi run build`.
 
+> **What's next →** Flow 6: publish your wheel to TestPyPI manually.
+
 ---
 
-## Flow 6 — Publish to TestPyPI (manual)
+## Flow 6 — Publish to TestPyPI (manual)  ·  ⏱ 10 min  ·  required
 
 TestPyPI is a sandbox registry — perfect for practising without polluting the
 real PyPI.
@@ -699,14 +751,29 @@ Install from TestPyPI to confirm it works:
 pip install --index-url https://test.pypi.org/simple/ ci_cd_template
 ```
 
+> **What's next →** Flow 7: automate publishing with GitHub Actions so a release triggers it automatically.
+
 ---
 
-## Flow 7 — GitHub Actions CI/CD
+## Flow 7 — GitHub Actions CI/CD  ·  ⏱ 10 min  ·  required
 
 GitHub Actions runs your pipelines automatically in the cloud whenever you push
 code or create a release.
 
 ### Workflows at a glance
+
+```mermaid
+flowchart LR
+    P["git push\n(any branch)"] --> T["test.yml\ntrain + pytest"]
+    D["data/ or scripts/\nchanged"] --> TR["train.yml\nretrain → artifact"]
+    N["notebooks/ or model/\nchanged"] --> DB["build-dashboard.yml\nHTML artifact"]
+    R["GitHub Release\npublished"] --> PB["publish.yml\nbuild → TestPyPI"]
+
+    T -->|all tests pass| G["✅ PR can merge"]
+    T -->|any test fails| B["❌ PR blocked"]
+```
+
+*Every arrow is automatic — no manual steps after the initial setup.*
 
 | Workflow | Trigger | What it does |
 |---|---|---|
@@ -758,6 +825,8 @@ GitHub automatically masks the value in all logs — it appears as `***`.
 2. Tag: `v0.1.0`, Title: `First release`, add a description
 3. Click **Publish release**
 4. `publish.yml` triggers automatically and uploads to TestPyPI
+
+> **What's next →** You've completed the core path! Explore optional flows: Flow 9 (mypy), Flow 10 (pre-commit), Flow 11 (Dependabot), Flow 12 (PR workflow).
 
 ---
 
@@ -832,7 +901,7 @@ git diff                           # see what you changed
 
 ---
 
-## Flow 9 — Type checking with mypy
+## Flow 9 — Type checking with mypy  ·  ⏱ 10 min  ·  optional
 
 Type checking catches a whole class of bugs (wrong argument types, missing keys,
 `None` passed where a value is expected) before the code even runs.
@@ -873,7 +942,7 @@ Revert: `git checkout -- src/ci_cd_template/model.py`
 
 ---
 
-## Flow 10 — Pre-commit hooks
+## Flow 10 — Pre-commit hooks  ·  ⏱ 10 min  ·  optional
 
 Pre-commit hooks run lint and format checks **automatically before every
 `git commit`**, catching problems at the source before code reaches CI.
@@ -930,7 +999,7 @@ pixi run pre-commit
 
 ---
 
-## Flow 11 — Dependabot (automated dependency updates)
+## Flow 11 — Dependabot (automated dependency updates)  ·  ⏱ 5 min  ·  optional
 
 [`.github/dependabot.yml`](.github/dependabot.yml) tells GitHub to open PRs
 automatically when new versions of your GitHub Actions are released.
@@ -967,7 +1036,7 @@ The `groups` config ensures they are always bumped together in a single PR.
 
 ---
 
-## Flow 11b — Policy-as-code: writing your own custom checks
+## Flow 11b — Policy-as-code: writing your own custom checks  ·  ⏱ 15 min  ·  optional
 
 The [accessibility alt-text bot](https://github.com/the-turing-way/the-turing-way/blob/main/.github/workflows/accessibility-alt-text-bot.yml)
 from The Turing Way is a perfect example of the most powerful idea in GitHub Actions:
@@ -1059,7 +1128,7 @@ discussions so it can post a comment. Our data validator only reads files, so
 
 ---
 
-## Flow 12 — Pull request workflow
+## Flow 12 — Pull request workflow  ·  ⏱ 10 min  ·  optional
 
 Professional teams never push directly to `main`. All changes go through a
 **Pull Request** for review and CI before merging.
