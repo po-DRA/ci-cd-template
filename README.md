@@ -1204,9 +1204,22 @@ The `groups` config ensures they are always bumped together in a single PR.
 
 ### Activate on your fork
 
-1. Your fork → **Settings → Code security and analysis**
+1. Your fork → **Settings → Security** (left sidebar)
 2. Enable **Dependabot alerts** and **Dependabot security updates**
 3. The config in [`.github/dependabot.yml`](.github/dependabot.yml) is picked up automatically.
+
+> **Don't see it?** GitHub's label varies by version — look for **"Code security"** or
+> **"Code security and analysis"** in the Settings sidebar. On a fork it may be hidden
+> until you push at least one commit. You can also go directly to:
+> `https://github.com/<your-username>/<repo-name>/settings/security_analysis`
+>
+> **Verify Dependabot picked up the config** by opening this URL in a browser
+> (replace with your username and repo name):
+> `https://github.com/<your-username>/<repo-name>/network/updates`
+>
+> You should see your workflow files listed with a **"Check for updates"** button
+> and recent job runs. **"No PRs affected"** means all actions are already up to date —
+> that is the expected result for a freshly created repo.
 
 ---
 
