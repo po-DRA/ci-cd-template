@@ -149,6 +149,16 @@ For a deeper walkthrough of Pixi and packaging concepts see:
 
 ---
 
+## The project
+
+You are a data scientist at a hospital.
+Clinicians have collected measurements for 60 patients — age, height, weight, blood pressure, cholesterol, glucose, and lifestyle factors (smoking, alcohol, physical activity) — and labelled each record with whether the patient has cardiovascular disease (`cardio = 1`) or not (`cardio = 0`).
+Your job is to train a binary classifier that predicts risk from these 11 features.
+The model is a scikit-learn `Pipeline`: a `StandardScaler` first normalises the features (age is stored in days, cholesterol on a 1–3 scale — very different magnitudes), then a `LogisticRegression` makes the prediction.
+The model is intentionally simple — the point of this repo is not the ML, it is the **engineering workflow** that surrounds it: reproducible environments, automated tests, CI/CD pipelines, and publishing.
+
+---
+
 ## Flow 1 — Train the model  ·  ⏱ 2 min  ·  required
 
 ```bash
