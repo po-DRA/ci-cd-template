@@ -48,7 +48,7 @@ show_missing = true     # show which lines are not covered
 # ── Flow 4 (advanced): mutation testing config ────────────────────────────────
 [tool.mutmut]
 paths_to_mutate = ["src/ci_cd_template"]
-tests_dir       = "tests/"
+tests_dir       = ["tests/"]
 
 # ── Flow 5 (advanced): mypy type checking config ──────────────────────────────
 [tool.mypy]
