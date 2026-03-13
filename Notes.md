@@ -65,3 +65,4 @@ For this part, try to:
 - [GitHub Actions documentation](https://docs.github.com/en/actions)
 - [GitHub Actions — Build and test Python](https://docs.github.com/en/actions/tutorials/build-and-test-code/python)
 - [The Turing Way — Continuous integration options](https://book.the-turing-way.org/reproducible-research/ci/ci-options/)
+- [Automating research data workflows with GitHub Actions — December 2025 (YouTube)](https://www.youtube.com/watch?v=NNo6yfEXF2g)
