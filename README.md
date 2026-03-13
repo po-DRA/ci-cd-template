@@ -977,7 +977,7 @@ GitHub automatically masks the value in all logs — it appears as `***`.
 
 > **What's next →** You've completed the core path! Explore optional flows: Flow 9 (mypy), Flow 10 (pre-commit), Flow 11 (Dependabot), Flow 12 (PR workflow).
 
-> **Going further — two patterns worth knowing**
+> **Going further — multi-job pipelines with `needs:`**
 >
 > The workflows in this repo each have a single job. Real pipelines chain jobs with `needs:` —
 > a later job only starts if an earlier one succeeded, and can consume its uploaded artifacts:
@@ -999,16 +999,7 @@ GitHub automatically masks the value in all logs — it appears as `***`.
 > The Turing Way's [`ci.yml`](https://github.com/the-turing-way/the-turing-way/blob/main/.github/workflows/ci.yml)
 > uses this pattern: the `build-jb` job builds the Jupyter Book and uploads the HTML as an artifact;
 > the `offline-link-check` job then uses `needs: build-jb` to download it and check all links.
->
-> **`concurrency:`** prevents two workflow runs stepping on each other — useful when two pushes
-> trigger simultaneous deploys that would overwrite the same GitHub Pages site:
->
-> ```yaml
-> concurrency:
->   group: pages
->   cancel-in-progress: false   # finish the current deploy before starting the next
-> ```
-> The [GitHub Actions docs on concurrency](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/control-the-concurrency-of-workflows-and-jobs) cover all available options.
+> See **Further reading → Advanced GitHub Actions concepts** for `concurrency:` and platform comparisons.
 
 ---
 
@@ -1442,6 +1433,24 @@ Both make excellent follow-on exercises.
 - [GitHub Actions — Build and test Python](https://docs.github.com/en/actions/tutorials/build-and-test-code/python)
 - [Automating research data workflows with GitHub Actions](https://github.com/cct-datascience/github-actions-for-research)
 - [The Turing Way — Continuous integration options](https://book.the-turing-way.org/reproducible-research/ci/ci-options/)
+
+**Advanced GitHub Actions concepts**
+- [Controlling concurrency](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/control-the-concurrency-of-workflows-and-jobs) — prevent simultaneous workflow runs from overwriting each other (e.g. two deploys racing on the same GitHub Pages site); uses a `concurrency:` block with `group:` and `cancel-in-progress:`
+- [Matrix builds](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/running-variations-of-jobs-in-a-workflow) — run the same job across multiple Python versions or operating systems in parallel (`strategy: matrix:`)
+- [Reusable workflows](https://docs.github.com/en/actions/sharing-automations/reusing-workflows) — call one workflow from another to avoid duplication across repos
+- [GitHub Actions security hardening](https://docs.github.com/en/actions/security-for-github-actions/security-guides/security-hardening-for-github-actions) — principle of least privilege, pinning action SHAs, avoiding script injection
+
+**CI/CD on other platforms**
+This course uses GitHub Actions, but the same ideas transfer to other platforms with different syntax:
+
+| Platform | Config file | Key difference |
+|---|---|---|
+| [GitLab CI/CD](https://docs.gitlab.com/ee/ci/) | `.gitlab-ci.yml` | Docker-image based; `script:` instead of `steps:`; no `uses:` ecosystem |
+| [Codeberg / Gitea Actions](https://docs.gitea.com/usage/actions/overview) | `.gitea/workflows/*.yml` | Intentionally GitHub-compatible; most workflows port with minimal changes |
+| [CircleCI](https://circleci.com/docs/) | `.circleci/config.yml` | Orbs (reusable packages) instead of Actions; strong caching primitives |
+| [Jenkins](https://www.jenkins.io/doc/book/pipeline/) | `Jenkinsfile` (Groovy) | Self-hosted; very flexible but more ops overhead |
+
+The mental model — trigger → job → steps → artifact — is the same everywhere.
 
 **Code quality tools**
 - [Ruff documentation](https://docs.astral.sh/ruff/)
