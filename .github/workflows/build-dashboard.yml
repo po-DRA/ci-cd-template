@@ -16,9 +16,8 @@ jobs:
 
       - name: Install pixi
         uses: prefix-dev/setup-pixi@v0.9.4
-
-      - name: Install dependencies
-        run: pixi install
+        with:
+          locked: false
 
       - name: Train model
         run: pixi run train
