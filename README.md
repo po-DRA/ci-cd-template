@@ -977,6 +977,39 @@ GitHub automatically masks the value in all logs — it appears as `***`.
 
 > **What's next →** You've completed the core path! Explore optional flows: Flow 9 (mypy), Flow 10 (pre-commit), Flow 11 (Dependabot), Flow 12 (PR workflow).
 
+> **Going further — two patterns worth knowing**
+>
+> The workflows in this repo each have a single job. Real pipelines chain jobs with `needs:` —
+> a later job only starts if an earlier one succeeded, and can consume its uploaded artifacts:
+>
+> ```yaml
+> jobs:
+>   build:
+>     runs-on: ubuntu-latest
+>     steps:
+>       - run: mkdocs build        # build the site, upload as artifact
+>
+>   deploy:
+>     needs: build                 # only runs if build succeeded
+>     runs-on: ubuntu-latest
+>     steps:
+>       - run: deploy...
+> ```
+>
+> The Turing Way's [`ci.yml`](https://github.com/the-turing-way/the-turing-way/blob/main/.github/workflows/ci.yml)
+> uses this pattern: the `build-jb` job builds the Jupyter Book and uploads the HTML as an artifact;
+> the `offline-link-check` job then uses `needs: build-jb` to download it and check all links.
+>
+> **`concurrency:`** prevents two workflow runs stepping on each other — useful when two pushes
+> trigger simultaneous deploys that would overwrite the same GitHub Pages site:
+>
+> ```yaml
+> concurrency:
+>   group: pages
+>   cancel-in-progress: false   # finish the current deploy before starting the next
+> ```
+> The [GitHub Actions docs on concurrency](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/control-the-concurrency-of-workflows-and-jobs) cover all available options.
+
 ---
 
 ## Flow 8 — What comes next: the real PyPI
