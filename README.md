@@ -262,7 +262,7 @@ assert pred == 0, f"Expected cardio=1 for high-risk patient, got {pred}"
 ```
 
 ```bash
-pixi run test
+pixi run test tests/test_02_model.py
 ```
 
 ```
@@ -283,7 +283,7 @@ pixi run test
 ```
 SKIPPED tests/test_02_model.py::test_saved_model_predicts_high_risk
 SKIPPED tests/test_03_e2e.py::test_predict_function_end_to_end
-30 passed, 2 skipped
+20 passed, 2 skipped
 ```
 
 No failures — the tests are **skipped**, not failed.
