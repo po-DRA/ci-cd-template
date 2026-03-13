@@ -915,18 +915,33 @@ flowchart LR
 
 ### Watch a workflow run
 
+A plain `git push` triggers **`test.yml`** (Run tests) on every push:
+
 ```bash
 git add .
 git commit -m "my first change"
 git push
 ```
 
-On GitHub: **Actions** tab → click the latest workflow run → watch each step live.
+On GitHub: **Actions** tab → click the **Run tests** workflow run → watch each step live.
+
+**`train.yml`** only fires when files in `data/` or `scripts/` change.
+To trigger it, touch any file in those directories:
+
+```bash
+# example: add a blank line to the training script, then push
+echo "" >> scripts/train.py
+git add scripts/train.py
+git commit -m "trigger train workflow"
+git push
+```
+
+On GitHub: **Actions** tab → click the **Train model** workflow run.
 
 ### Download a workflow artifact
 
 After `train.yml` completes:
-- **Actions** → select the run → scroll to **Artifacts** → download `trained-model`
+- **Actions** → select the **Train model** run → scroll to **Artifacts** → download `trained-model`
 
 ---
 
