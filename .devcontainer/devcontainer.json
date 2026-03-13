@@ -1,8 +1,9 @@
 {
     "name": "CI/CD Template",
 
-    // Clean Ubuntu base — avoids the default Python feature that auto-installs Poetry
-    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+    // Pre-built Python image (GitHub caches this — fast startup).
+    // Having a devcontainer.json at all stops GitHub's auto-Poetry-install.
+    "image": "mcr.microsoft.com/devcontainers/python:3.12",
 
     "features": {
         // Installs Pixi; Pixi then provides Python + all project dependencies
