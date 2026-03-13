@@ -54,9 +54,6 @@ Credit and thanks to the original dataset creator.
 
 ```
 ci-cd-template/
-├── .devcontainer/
-│   └── devcontainer.json        # Codespaces config — uses Pixi, skips Poetry
-│
 ├── .github/
 │   ├── dependabot.yml           # auto-PRs when GitHub Actions get new versions
 │   └── workflows/
