@@ -21,6 +21,9 @@ flowchart LR
 > **New here? Follow the solid arrows.** Each core flow takes 5–15 minutes.
 > Dashed paths are optional — come back to them once the core path works.
 
+If this material was useful, **[star the repo ⭐](https://github.com/po-DRA/ci-cd-template/stargazers)** — it helps others find it.
+Found a bug or have a suggestion? **[Open an issue](https://github.com/po-DRA/ci-cd-template/issues)** — feedback is very welcome.
+
 ### Tools at a glance
 
 | What you will learn | Tool |
@@ -1418,6 +1421,89 @@ Both make excellent follow-on exercises.
 
 ---
 
+## Appendix — Validating and debugging workflow YAML
+
+GitHub Actions workflows are plain YAML files, but a single indentation mistake
+can silently break a workflow or produce a confusing error message in the Actions
+tab. This appendix shows how to catch problems before pushing.
+
+### 1 — Syntax check with Python (no install needed)
+
+```bash
+python -c "import yaml; yaml.safe_load(open('.github/workflows/test.yml'))"
+```
+
+If the file is valid YAML, this prints nothing. If it is not, you get a
+`yaml.scanner.ScannerError` with a line number. Run this for any workflow file
+you edit. (The `yaml` package ships with Python's standard library via `PyYAML`.)
+
+### 2 — `actionlint` — lint GitHub Actions–specific rules
+
+`actionlint` goes beyond YAML syntax: it checks action versions, expression
+syntax `${{ }}`, step `id` references, `uses:` format, and more.
+
+**Install (one-time)**
+
+```bash
+# macOS
+brew install actionlint
+
+# Linux / Codespaces
+bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+
+# Windows (via Scoop)
+scoop install actionlint
+```
+
+**Run against all workflow files**
+
+```bash
+actionlint
+```
+
+Run from the repo root — it finds `.github/workflows/*.yml` automatically.
+
+**Or check a single file**
+
+```bash
+actionlint .github/workflows/test.yml
+```
+
+**Online**: paste a workflow into the [actionlint playground](https://rhysd.github.io/actionlint/)
+and see errors instantly — no install needed.
+
+### 3 — GitHub's built-in check on push
+
+When you push a workflow file, GitHub validates it before queuing any run.
+If the YAML is malformed or uses an unknown key, the Actions tab shows a red
+banner immediately — even before a job starts. This is your last line of defence,
+but relying on it means a round-trip push for every typo, so prefer local tools.
+
+### 4 — Common mistakes
+
+| Mistake | Symptom | Fix |
+|---|---|---|
+| Mixed tabs and spaces | `yaml.scanner.ScannerError` | Use spaces only (2 per indent level is conventional) |
+| `on:` block indented under `name:` | Workflow never triggers | `on:` must be at column 0 |
+| Action version missing `v` prefix | `uses: actions/checkout@4` runs the SHA `4` | Use `uses: actions/checkout@v4` |
+| `${{ secrets.FOO }}` with extra spaces inside `}}` | Expression evaluated as literal string | Keep `${{` and `}}` tight |
+| `run:` value on the same line as a pipe `|` | Step silently does nothing | Use `run: |` then indent the command |
+| `needs: job-name` doesn't match the job key | Workflow fails: "Job … is not defined" | Copy the exact key from `jobs:` block |
+| `env:` at step level vs job level confusion | Variable not visible in other steps | Job-level `env:` is shared; step-level is local |
+
+### 5 — Useful `actionlint` rules to know
+
+| Rule | What it catches |
+|---|---|
+| `action-versions` | Pinned to a moving tag like `@main` instead of a version |
+| `expression-syntax` | Malformed `${{ }}` expressions |
+| `shellcheck` | Shell errors inside `run:` blocks (requires `shellcheck` installed) |
+| `credentials-in-workflow` | Hard-coded secrets or tokens in plain text |
+
+> For a full rule list see the [actionlint documentation](https://github.com/rhysd/actionlint/blob/main/docs/checks.md).
+
+---
+
 ## Citation
 
 If you use this template for teaching, research, or derivative work, please cite it:
@@ -1435,6 +1521,9 @@ If you use this template for teaching, research, or derivative work, please cite
 ```
 
 A machine-readable [`CITATION.cff`](CITATION.cff) file is also included in this repository.
+
+Want to contribute feedback or report an issue? See [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Lesson announcement text and session notes are in [`Notes.md`](Notes.md).
 
 ---
 
