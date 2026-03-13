@@ -213,12 +213,13 @@ pixi run test
 
 **Expected output (before training):**
 ```
-.....s                                   [100%]
-5 passed, 1 skipped in 0.42s
+..............s......s                   [100%]
+20 passed, 2 skipped in 0.31s
 ```
 
-The skipped test (`test_saved_model_predicts_high_risk`) requires
-`model/model.joblib` to exist. Run training first to enable it:
+Two tests are skipped: `test_saved_model_predicts_high_risk` (in `test_02_model.py`)
+and `test_predict_function_end_to_end` (in `test_03_e2e.py`) — both require
+`model/model.joblib` to exist. Run training first to enable them:
 
 ```bash
 pixi run train && pixi run test
@@ -226,8 +227,8 @@ pixi run train && pixi run test
 
 **Expected output (after training):**
 ```
-......                                   [100%]
-6 passed in 0.48s
+......................                   [100%]
+22 passed in 0.25s
 ```
 
 ### What the tests check
@@ -421,7 +422,8 @@ tests/test_03_e2e.py::test_data_target_is_binary PASSED
 tests/test_03_e2e.py::test_pipeline_trains_and_predicts_on_real_data PASSED
 tests/test_03_e2e.py::test_pipeline_accuracy_above_threshold PASSED
 tests/test_03_e2e.py::test_risk_label_pipeline_end_to_end PASSED
-6 passed in 0.32s
+tests/test_03_e2e.py::test_predict_function_end_to_end PASSED
+7 passed in 0.21s
 ```
 
 ### Comparison: unit vs example-based vs E2E
