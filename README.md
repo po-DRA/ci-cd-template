@@ -159,7 +159,7 @@ The model is intentionally simple — the point of this repo is not the ML, it i
 
 ---
 
-## Flow 1 — Train the model  ·  ⏱ 2 min  ·  required
+## Flow 1 — Train the model  ·  required
 
 ```bash
 pixi run train
@@ -182,7 +182,7 @@ Model trained and saved to /workspaces/ci-cd-template/model/model.joblib
 
 ---
 
-## Flow 2 — Run automated tests  ·  ⏱ 5 min  ·  required
+## Flow 2 — Run automated tests  ·  required
 
 > **Three test files are already active in `tests/`** (`test_01_unit.py`, `test_02_model.py`, `test_03_e2e.py`).
 > Advanced tests live in `tests/incoming/` — you will move them in when you reach Flows 3d.
@@ -246,7 +246,7 @@ pixi run train && pixi run test
 
 ---
 
-## Flow 3 — Make tests fail on purpose  ·  ⏱ 10 min  ·  recommended
+## Flow 3 — Make tests fail on purpose  ·  recommended
 
 Learning how tests break is just as important as making them pass.
 Try each experiment, observe the error message, then **revert** before moving on.
@@ -348,7 +348,7 @@ pixi run train   # regenerate model.joblib with the correct target
 
 ---
 
-## Flow 3b — Unit testing a pure function  ·  ⏱ 10 min  ·  recommended
+## Flow 3b — Unit testing a pure function  ·  recommended
 
 The tests so far all use the trained model. A *unit test* tests one small piece
 of logic in complete isolation — no files, no model, no ML computation.
@@ -406,7 +406,7 @@ git checkout -- src/ci_cd_template/model.py
 
 ---
 
-## Flow 3c — End-to-end (E2E) testing  ·  ⏱ 5 min  ·  recommended
+## Flow 3c — End-to-end (E2E) testing  ·  recommended
 
 An E2E test runs the **entire pipeline** from real data to a final prediction —
 no mocks, no fixtures, no hand-crafted DataFrames.
@@ -444,7 +444,7 @@ tests/test_03_e2e.py::test_predict_function_end_to_end PASSED
 
 ---
 
-## Flow 3d — Advanced testing techniques  ·  ⏱ 30 min  ·  optional
+## Flow 3d — Advanced testing techniques  ·  optional
 
 ### Coverage — how much code do the tests reach?
 
@@ -478,7 +478,7 @@ First, raise the minimum threshold in `pyproject.toml`:
 fail_under = 100   # raised from 80 — any uncovered line will now fail
 ```
 
-Then add an unreachable function to any source file:
+Then add an unreachable function to `src/ci_cd_template/model.py`:
 
 ```python
 def untested_helper(x):
@@ -524,7 +524,7 @@ Hypothesis generates random valid patient records and verifies that:
 
 #### See Hypothesis find a bug automatically
 
-Change `classify_risk()` to always return `"LOW RISK"`:
+Open `src/ci_cd_template/model.py` and change `classify_risk()` to always return `"LOW RISK"`:
 
 ```python
 def classify_risk(probability: float) -> str:
@@ -638,7 +638,7 @@ a hint to add `test_at_threshold_is_high_risk` to your unit tests.
 
 ---
 
-## Flow 4 — Code quality with Ruff  ·  ⏱ 10 min  ·  required
+## Flow 4 — Code quality with Ruff  ·  required
 
 Ruff is an extremely fast Python linter and formatter. It replaces Flake8, isort,
 and Black in a single tool — and runs about 100× faster.
@@ -735,7 +735,7 @@ This is what a CI pipeline runs to block merges on poorly-formatted code.
 
 ---
 
-## Flow 5 — Build a Python package  ·  ⏱ 5 min  ·  required
+## Flow 5 — Build a Python package  ·  required
 
 Packaging turns your source code into a distributable `.whl` (wheel) and
 `.tar.gz` (source distribution).
@@ -804,7 +804,7 @@ To release a new version: edit `version` in `pyproject.toml`, then run
 
 ---
 
-## Flow 6 — Publish to TestPyPI (manual)  ·  ⏱ 10 min  ·  required
+## Flow 6 — Publish to TestPyPI (manual)  ·  required
 
 TestPyPI is a sandbox registry — perfect for practising without polluting the
 real PyPI.
@@ -854,7 +854,7 @@ pip install --index-url https://test.pypi.org/simple/ ci_cd_template
 
 ---
 
-## Flow 7 — GitHub Actions CI/CD  ·  ⏱ 10 min  ·  required
+## Flow 7 — GitHub Actions CI/CD  ·  required
 
 GitHub Actions runs your pipelines automatically in the cloud whenever you push
 code or create a release.
@@ -1017,7 +1017,7 @@ git diff                           # see what you changed
 
 ---
 
-## Flow 9 — Type checking with mypy  ·  ⏱ 10 min  ·  optional
+## Flow 9 — Type checking with mypy  ·  optional
 
 Type checking catches a whole class of bugs (wrong argument types, missing keys,
 `None` passed where a value is expected) before the code even runs.
@@ -1058,7 +1058,7 @@ Revert: `git checkout -- src/ci_cd_template/model.py`
 
 ---
 
-## Flow 10 — Pre-commit hooks  ·  ⏱ 10 min  ·  optional
+## Flow 10 — Pre-commit hooks  ·  optional
 
 Pre-commit hooks run lint and format checks **automatically before every
 `git commit`**, catching problems at the source before code reaches CI.
@@ -1115,7 +1115,7 @@ pixi run pre-commit
 
 ---
 
-## Flow 11 — Dependabot (automated dependency updates)  ·  ⏱ 5 min  ·  optional
+## Flow 11 — Dependabot (automated dependency updates)  ·  optional
 
 [`.github/dependabot.yml`](.github/dependabot.yml) tells GitHub to open PRs
 automatically when new versions of your GitHub Actions are released.
@@ -1152,7 +1152,7 @@ The `groups` config ensures they are always bumped together in a single PR.
 
 ---
 
-## Flow 11b — Policy-as-code: writing your own custom checks  ·  ⏱ 15 min  ·  optional
+## Flow 11b — Policy-as-code: writing your own custom checks  ·  optional
 
 The [accessibility alt-text bot](https://github.com/the-turing-way/the-turing-way/blob/main/.github/workflows/accessibility-alt-text-bot.yml)
 from The Turing Way is a perfect example of the most powerful idea in GitHub Actions:
@@ -1244,7 +1244,7 @@ discussions so it can post a comment. Our data validator only reads files, so
 
 ---
 
-## Flow 12 — Pull request workflow  ·  ⏱ 10 min  ·  optional
+## Flow 12 — Pull request workflow  ·  optional
 
 Professional teams never push directly to `main`. All changes go through a
 **Pull Request** for review and CI before merging.
