@@ -27,7 +27,7 @@ Design exercise (think through, don't just run):
   The test here does the same thing, just without the HTTP layer.
 
 Run this file alone:
-    pixi run test tests/test_e2e.py -v
+    pixi run test tests/test_03_e2e.py -v
 
 To break this test, try:
   - Deleting data/data.csv  →  FileNotFoundError during training
@@ -44,8 +44,15 @@ import pytest
 from ci_cd_template.model import FEATURES, TARGET, classify_risk, train_model
 from ci_cd_template.predict import predict
 
-# Locate project root relative to this test file (works from any working directory)
-ROOT = Path(__file__).parent.parent
+# Locate project root by searching upward for .git — robust against mutmut v3,
+# which copies source files (including pyproject.toml) into mutants/ before running.
+def _find_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / ".git").exists():
+            return parent
+    return Path(__file__).resolve().parent.parent  # fallback
+
+ROOT = _find_root()
 DATA_PATH = ROOT / "data" / "data.csv"
 MODEL_PATH = ROOT / "model" / "model.joblib"
 

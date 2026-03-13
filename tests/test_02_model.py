@@ -8,8 +8,15 @@ import pytest
 
 from ci_cd_template.model import FEATURES, TARGET
 
-# Resolve the model path relative to the project root (works from any cwd)
-MODEL_PATH = Path(__file__).parent.parent / "model" / "model.joblib"
+# Locate project root by searching upward for .git — robust against mutmut v3,
+# which copies source files (including pyproject.toml) into mutants/ before running.
+def _find_root() -> Path:
+    for parent in Path(__file__).resolve().parents:
+        if (parent / ".git").exists():
+            return parent
+    return Path(__file__).resolve().parent.parent  # fallback
+
+MODEL_PATH = _find_root() / "model" / "model.joblib"
 
 
 def test_train_model_returns_pipeline(trained_model):

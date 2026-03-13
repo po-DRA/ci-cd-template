@@ -699,7 +699,7 @@ pixi run format
 
 #### Make the formatter find differences
 
-Paste badly-formatted code into any source file:
+Paste badly-formatted code into `src/ci_cd_template/model.py`:
 
 ```python
 def bad_function(   x,y,z   ):
@@ -707,7 +707,7 @@ def bad_function(   x,y,z   ):
 ```
 
 ```bash
-pixi run format
+pixi run format src/ci_cd_template/model.py
 ```
 
 ```
@@ -736,6 +736,14 @@ This is what a CI pipeline runs to block merges on poorly-formatted code.
 ---
 
 ## Flow 5 — Build a Python package  ·  required
+
+So far the model and prediction logic live only in this repo. Packaging
+turns that code into a standard Python distribution — a `.whl` (wheel) file
+— that anyone can install with `pip install`. Once published to PyPI (Flow 6),
+a colleague or a production service could do `pip install cardio-risk-yourname`
+and immediately call `train_model()` or `predict()` without cloning the repo.
+The wheel ships the **code only**; the trained `model.joblib` artifact is
+generated separately at runtime (by CI or by the developer).
 
 Packaging turns your source code into a distributable `.whl` (wheel) and
 `.tar.gz` (source distribution).
@@ -768,6 +776,13 @@ ls dist/
 > Scripts, notebooks, data, and tests are automatically excluded.
 > The trained `model.joblib` artifact is **not** in the wheel — it is
 > generated at runtime and uploaded separately by the `train.yml` CI workflow.
+>
+> **Why not ship the model in the wheel?** A wheel is a *code* distribution —
+> installed once, reused many times. A `.joblib` file is a *data artifact* that
+> changes every time you retrain. Bundling it would bloat every `pip install`,
+> and you'd need a new package release just to deploy a retrained model.
+> This separation (code via PyPI, artifact via CI) is standard ML engineering
+> practice — the same pattern used by MLflow, BentoML, and SageMaker.
 
 Validate the package before uploading:
 ```bash
@@ -965,6 +980,34 @@ with two small differences:
 > Package names are globally unique. Rename `ci_cd_template` in `pyproject.toml`
 > to something that is yours (e.g. `cardio-risk-yourname`) and check availability
 > at [pypi.org](https://pypi.org/) first.
+
+### Publishing the trained model artifact
+
+The wheel ships code only. If you also want to distribute the trained
+`model.joblib` — so users can call `predict()` without retraining — attach it
+to the GitHub Release alongside the wheel:
+
+```bash
+# After creating the release (e.g. v0.1.0), upload the artifact:
+gh release upload v0.1.0 model/model.joblib
+```
+
+Anyone can then download it:
+```bash
+gh release download v0.1.0 --pattern "model.joblib"
+```
+
+This is the simplest approach and requires no extra infrastructure. For
+larger projects or teams, dedicated model registries handle versioning,
+lineage, and serving at scale:
+- **[MLflow Model Registry](https://mlflow.org/docs/latest/model-registry.html)** — tracks experiments, metrics, and model versions; integrates with most ML frameworks
+- **[Hugging Face Hub](https://huggingface.co/docs/hub/models-uploading)** — free model hosting with versioning; increasingly used beyond NLP for any sklearn/joblib artifact
+
+> **Further reading — MLOps maturity:**
+> Google's [MLOps: Continuous delivery and automation pipelines in machine learning](https://cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning)
+> defines the three-level maturity model (Level 0 → manual notebooks, Level 1 → automated
+> training pipelines, Level 2 → full CI/CD pipeline automation) that has become standard
+> vocabulary in the field. This repo sits at Level 1. Last reviewed August 2024.
 
 ---
 
