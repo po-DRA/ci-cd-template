@@ -150,6 +150,9 @@ pixi install
 For a deeper walkthrough of Pixi and packaging concepts see:
 **[Python Packaging with Pixi](https://priya-gittest.github.io/Python-Packaging-with-Pixi/)**
 
+> **Coming from R?** Pixi is the Python equivalent of `renv` — it locks exact package versions in `pixi.lock` (like `renv.lock`) and installs everything into an isolated `.pixi/` environment.
+> The first run downloads all packages and **may take 2–3 minutes** — this is normal. Subsequent runs use a local cache and are near-instant.
+
 ---
 
 ## The project
@@ -245,7 +248,10 @@ pixi run train && pixi run test
 | `test_low_risk_patient_classified_as_no_cardio` | Low-risk profile → `cardio=0` |
 | `test_saved_model_predicts_high_risk` | Persisted model still works *(skipped if no file)* |
 
-> **What's next →** Flow 4: check code quality with `pixi run lint` — or first explore how tests break in Flow 3 (recommended).
+> **Coming from R?** `pixi run test` is the Python equivalent of `devtools::test()` or `testthat::test_dir()` — it discovers and runs all `test_*.py` files automatically via pytest.
+
+> **What's next →** These tests were written for you so you could see a green suite on day one. Flow 3 is where you learn *what each test is doing* and *why it matters* — by deliberately making them fail. That is where the real understanding comes from.
+> Flow 4 checks code quality — or continue straight to Flow 3 (recommended).
 
 ---
 
@@ -511,6 +517,9 @@ Lines highlighted in **red** are not covered; **green** are covered.
 
 ### Property-based testing — test with hundreds of random inputs
 
+> **The key idea:** with normal unit tests, *you* choose the example inputs. Hypothesis flips this — you describe the *shape* of valid input (e.g. "a blood pressure between 60 and 250") and Hypothesis generates hundreds of random examples automatically, including edge cases you would never think of. If any example breaks the invariant, it reports the smallest failing case.
+> In R, `hedgehog` or `QuickCheck` serve the same purpose.
+
 > **Before running:** move the file into the active test folder:
 > ```bash
 > mv tests/incoming/test_04_hypothesis.py tests/
@@ -646,6 +655,8 @@ a hint to add `test_at_threshold_is_high_risk` to your unit tests.
 Ruff is an extremely fast Python linter and formatter. It replaces Flake8, isort,
 and Black in a single tool — and runs about 100× faster.
 
+> **Coming from R?** Ruff does the job of both `lintr` (flags style and logic issues) and `styler` (reformats code) — but as one tool, with one command.
+
 ### Linting — find code problems
 
 ```bash
@@ -739,6 +750,9 @@ This is what a CI pipeline runs to block merges on poorly-formatted code.
 ---
 
 ## Flow 5 — Build a Python package  ·  required
+
+> **Coming from R?** In R a package is defined by a `DESCRIPTION` file and built with `devtools::build()`.
+> In Python, `pyproject.toml` plays the role of `DESCRIPTION`, and `python -m build` produces the equivalent distributable — a `.whl` (wheel) file.
 
 So far the model and prediction logic live only in this repo. Packaging
 turns that code into a standard Python distribution — a `.whl` (wheel) file
@@ -1104,6 +1118,9 @@ git diff                           # see what you changed
 
 ## Flow 9 — Type checking with mypy  ·  optional
 
+> **You'll be glad you did this when** a colleague passes a string where your function expects a float, or returns `None` from a function that should always return a list — mypy catches these before the code ever runs.
+> In R, type annotations are informal; in Python they are machine-checkable.
+
 Type checking catches a whole class of bugs (wrong argument types, missing keys,
 `None` passed where a value is expected) before the code even runs.
 
@@ -1144,6 +1161,8 @@ Revert: `git checkout -- src/ci_cd_template/model.py`
 ---
 
 ## Flow 10 — Pre-commit hooks  ·  optional
+
+> **You'll be glad you did this when** you make a quick fix, commit in a hurry, and later find in CI that you left a debug `print()` in, or broke formatting. Pre-commit catches it locally — before the push, before the red cross, before anyone sees it.
 
 Pre-commit hooks run lint and format checks **automatically before every
 `git commit`**, catching problems at the source before code reaches CI.
@@ -1202,6 +1221,8 @@ pixi run pre-commit
 
 ## Flow 11 — Dependabot (automated dependency updates)  ·  optional
 
+> **You'll be glad you did this when** a security vulnerability is disclosed in `actions/checkout` and every repo you maintain needs updating. Dependabot opens the PR automatically — you just review and merge.
+
 [`.github/dependabot.yml`](.github/dependabot.yml) tells GitHub to open PRs
 automatically when new versions of your GitHub Actions are released.
 
@@ -1251,6 +1272,8 @@ The `groups` config ensures they are always bumped together in a single PR.
 ---
 
 ## Flow 11b — Policy-as-code: writing your own custom checks  ·  optional
+
+> **You'll be glad you did this when** a new collaborator adds 500 rows of malformed data with negative blood pressure values and the CI automatically blocks the merge — without you having to review or notice it manually.
 
 The [accessibility alt-text bot](https://github.com/the-turing-way/the-turing-way/blob/main/.github/workflows/accessibility-alt-text-bot.yml)
 from The Turing Way is a perfect example of the most powerful idea in GitHub Actions:
@@ -1343,6 +1366,8 @@ discussions so it can post a comment. Our data validator only reads files, so
 ---
 
 ## Flow 12 — Pull request workflow  ·  optional
+
+> **You'll be glad you did this when** you push a breaking change directly to `main`, realise tests are failing, and have to do a messy revert in public. Branch protection makes pushing directly to `main` impossible — every change goes through CI first.
 
 Professional teams never push directly to `main`. All changes go through a
 **Pull Request** for review and CI before merging.
