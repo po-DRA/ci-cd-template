@@ -1596,9 +1596,7 @@ Lesson announcement text and session notes are in [`Notes.md`](Notes.md).
 
 ## Acknowledgements
 
-This teaching template was designed and written by a human educator.
-The code, documentation, diagrams, and README were developed with AI assistance
-from **[Claude](https://claude.ai)** (Anthropic) — used as a pair-programming
-partner for debugging, drafting, and refining content throughout the project.
+This teaching material ,code, documentation, diagrams and README were developed by a human educator with AI assistance
+from **[Claude](https://claude.ai)** (Anthropic) used as a pair-programming partner for debugging, drafting, and refining content throughout the project.
+It was tested by a real human.
 
-> *A good tool doesn't write the course for you — it helps you write it better.*
